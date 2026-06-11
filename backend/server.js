@@ -6,10 +6,17 @@ const productRoutes = require("./src/routes/productRoutes");
 
 const app = express();
 
-connectDB();
-
 app.use(cors({ origin: "*", credentials: false }));
 app.use(express.json());
+
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    res.status(500).json({ message: "DB connection failed" });
+  }
+});
 
 app.use("/api/products", productRoutes);
 
